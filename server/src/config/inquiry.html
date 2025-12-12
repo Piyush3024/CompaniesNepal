@@ -1,0 +1,100 @@
+<!-- export const Inquiry_Email_Template = ({
+  username,
+  userEmail,
+  inquiryType,
+  inquiryMessage,
+}) => {
+  const typeLabels = {
+    general: "General Inquiry",
+    product: "Product Inquiry",
+    support: "Support Request",
+    feedback: "Feedback",
+    complaint: "Complaint",
+  };
+  const introMessage = {
+    general: `We’ve received your
+general inquiry.`,
+    product: `Thank you for reaching out with your
+product-related question.`,
+    support: `Your support request has been received.
+We're here to help!`,
+    feedback: `We appreciate your feedback and will review it
+carefully.`,
+    complaint: `We’re sorry to hear about your issue. Your complaint
+has been logged for review.`,
+  };
+  return `
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>${typeLabels[inquiryType]} – Company Nepal</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f6f8fa;
+        margin: 0;
+        padding: 0;
+        color: #333;
+      }
+      .container {
+        max-width: 600px;
+        margin: 30px auto;
+        background-color: #ffffff;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        padding: 30px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+      .header {
+        font-size: 22px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #007bff;
+      }
+      .message {
+        margin-top: 15px;
+        line-height: 1.7;
+      }
+      .footer {
+        margin-top: 30px;
+        font-size: 12px;
+        color: #777;
+        border-top: 1px solid #ccc;
+        padding-top: 15px;
+        text-align: center;
+      }
+      .label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">${typeLabels[inquiryType]}</div>
+
+      <div class="message">
+        <p>Dear Admin,</p>
+        <p>${introMessage[inquiryType]}</p>
+
+        <p class="label">From:</p>
+        <p>${username} (${userEmail})</p>
+
+        <p class="label">Message:</p>
+        <p>${inquiryMessage}</p>
+
+        <p>Kind regards,<br />Company Nepal Team</p>
+      </div>
+
+      <div class="footer">
+        &copy; ${new Date().getFullYear()} Company Nepal Pvt. Ltd. All rights
+        reserved.
+      </div>
+    </div>
+  </body>
+</html>
+`;
+}; -->
