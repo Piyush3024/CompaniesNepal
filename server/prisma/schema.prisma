@@ -17,22 +17,23 @@ model areas {
   cities           cities             @relation(fields: [city_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "areas_ibfk_1")
   companies        companies[]
   company_branches company_branches[]
-  nearby_id    Int?
-  nearby       areas?  @relation("NearbyAreas", fields: [nearby_id], references: [id])
-  nearby_areas areas[] @relation("NearbyAreas")
-  user         user[] // area → many users
+  nearby_id        Int?
+  nearby           areas?             @relation("NearbyAreas", fields: [nearby_id], references: [id])
+  nearby_areas     areas[]            @relation("NearbyAreas")
+  user             user[] // area → many users
 
   @@index([city_id], map: "city_id")
   @@index([nearby_id])
 }
 
 model bookmarked_inquiries {
-  id         Int      @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   user_id    Int
   inquiry_id Int
-  created_at DateTime @default(now())
-  user    user      @relation(fields: [user_id], references: [id])
-  inquiry inquiries @relation(fields: [inquiry_id], references: [id], onDelete: Cascade)
+  created_at DateTime  @default(now())
+  user       user      @relation(fields: [user_id], references: [id])
+  inquiry    inquiries @relation(fields: [inquiry_id], references: [id], onDelete: Cascade)
+
   @@unique([user_id, inquiry_id])
 }
 
@@ -58,6 +59,7 @@ model cities {
   updated_at  DateTime? @default(now()) @db.Timestamp(0)
   areas       areas[]
   districts   districts @relation(fields: [district_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "cities_ibfk_1")
+
   @@index([district_id], map: "district_id")
 }
 
@@ -119,6 +121,7 @@ model company_branches {
   updated_at  DateTime? @default(now()) @db.Timestamp(0)
   companies   companies @relation(fields: [company_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "company_branches_ibfk_1")
   areas       areas?    @relation(fields: [area_id], references: [id], onUpdate: NoAction, map: "company_branches_ibfk_2")
+
   @@index([area_id], map: "area_id")
   @@index([company_id], map: "company_id")
 }
