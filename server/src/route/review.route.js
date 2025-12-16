@@ -6,23 +6,23 @@ import {
   getReview,
   deleteReview,
 } from "../controller/review.controller.js";
-import { authorizeRoles, verifyToken } from "../middleware/middleware.js";
+import { authorizeRoles, protectRoute } from "../middleware/middleware.js";
 
 router.post(
   "/:id",
-  verifyToken,
+  protectRoute,
   authorizeRoles("admin", "seller", "buyer"),
   createReview
 );
 router.get(
   "/:id",
-  verifyToken,
+  protectRoute,
   authorizeRoles("admin", "seller", "buyer"),
   getReview
 );
 router.delete(
   "/delete/:id",
-  verifyToken,
+  protectRoute,
   authorizeRoles("admin", "seller", "buyer"),
   deleteReview
 );

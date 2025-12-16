@@ -112,7 +112,7 @@ Endpoint: /users/:id
 
 Description: Deletes a user by ID.
 
-Middleware: verifyToken, isSameUser
+Middleware: protectRoute, isSameUser
 
 Success Response:
 
@@ -222,7 +222,7 @@ Endpoint: /companies/create
 
 Description: Creates a new company with hashed IDs.
 
-Middleware: verifyToken, authorizeRoles("seller", "admin")
+Middleware: protectRoute, authorizeRoles("seller", "admin")
 
 Request Body:
 
@@ -322,7 +322,7 @@ Endpoint: /companies/delete/:id
 
 Description: Deletes a company by its hashed ID.
 
-Middleware: verifyToken, authorizeRoles("seller", "admin")
+Middleware: protectRoute, authorizeRoles("seller", "admin")
 
 Success Response:
 
@@ -350,7 +350,7 @@ Endpoint: /companies/update/:id
 
 Description: Updates a company by its hashed ID.
 
-Middleware: verifyToken, authorizeRoles("seller", "admin")
+Middleware: protectRoute, authorizeRoles("seller", "admin")
 
 Request Body:
 
@@ -513,7 +513,7 @@ Endpoint: /companies/toggle-premium/:id
 
 Description: Toggles the premium status of a company.
 
-Middleware: verifyToken, authorizeRoles("admin")
+Middleware: protectRoute, authorizeRoles("admin")
 
 Success Response:
 
@@ -549,7 +549,7 @@ Endpoint: /companies/toggle-blocked/:id
 
 Description: Toggles the blocked status of a company.
 
-Middleware: verifyToken, authorizeRoles("admin")
+Middleware: protectRoute, authorizeRoles("admin")
 
 Success Response:
 
@@ -579,7 +579,7 @@ Code: 500
 
 🔐 Middleware
 
-verifyToken: Validates JWT tokens for authenticated routes.
+protectRoute: Validates JWT tokens for authenticated routes.
 
 isSameUser: Ensures the requesting user matches the target user ID (used in user routes).
 

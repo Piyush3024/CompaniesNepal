@@ -63,7 +63,7 @@ export const authorizeRoles = (...allowedRoles) => {
   };
 };
 
-export const verifyToken = async (req, res, next) => {
+export const protectRoute = async (req, res, next) => {
   try {
     console.log("access token:", req.header);
     const accessToken = req.cookies.accessToken;

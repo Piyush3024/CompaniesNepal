@@ -15,12 +15,12 @@ import {
   toggleBlockedCompanyStatus,
   getCompanyNameAccordingToRating,
 } from "../controller/company.controller.js";
-import { verifyToken } from "../middleware/middleware.js";
+import { protectRoute } from "../middleware/middleware.js";
 
 router.get("/", fetchCompany);
 router.post(
   "/create",
-  verifyToken,
+  protectRoute,
   authorizeRoles("seller", "admin"),
   createCompany
 );
@@ -28,7 +28,7 @@ router.get("/premium-companies", fetchPremiumCompanies);
 router.get("/blocked-companies", fetchBlockedCompany);
 router.get(
   "/fetch-company-by-rating",
-  verifyToken,
+  protectRoute,
   // authorizeRoles("seller", "admin"),
   getCompanyNameAccordingToRating
 );
@@ -36,13 +36,13 @@ router.get(
 router.get("/:id", fetchSingleCompany);
 router.delete(
   "/delete/:id",
-  verifyToken,
+  protectRoute,
   authorizeRoles("seller", "admin"),
   deleteCompany
 );
 router.patch(
   "/update/:id",
-  verifyToken,
+  protectRoute,
   authorizeRoles("seller", "admin"),
   updateCompany
 );
@@ -50,13 +50,13 @@ router.patch(
 router.get("/areas/:areaId", fetchCompanyByArea);
 router.patch(
   "/toggle-premium/:id",
-  verifyToken,
+  protectRoute,
   authorizeRoles("admin"),
   togglePremiumCompanyStatus
 );
 router.patch(
   "/toggle-blocked/:id",
-  verifyToken,
+  protectRoute,
   authorizeRoles("admin"),
   toggleBlockedCompanyStatus
 );

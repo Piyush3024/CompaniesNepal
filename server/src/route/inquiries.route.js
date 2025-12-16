@@ -10,20 +10,20 @@ import {
   updateInquiry,
   deleteInquiry,
 } from "../controller/inquiry.controller.js";
-import { authorizeRoles, verifyToken } from "../middleware/middleware.js";
+import { authorizeRoles, protectRoute } from "../middleware/middleware.js";
 
-router.post("/create-inquiry", verifyToken, createInquiry);
+router.post("/create-inquiry", protectRoute, createInquiry);
 router.get("/company/:companyId", getInquiriesForCompany);
 router.delete(
   "/company/:companyId/inquiry/:inquiryId",
   deleteInquiryFromCompanyView
 );
-router.get("/user/:userId", verifyToken, getInquiriesForUser);
+router.get("/user/:userId", protectRoute, getInquiriesForUser);
 router.get("/:inquiryId", getInquiryById);
 router.patch("/update-inquiry/:inquiryId", updateInquiry);
 router.delete(
   "/delete-inquiry/:inquiryId",
-  verifyToken,
+  protectRoute,
   authorizeRoles("admin"),
   deleteInquiry
 );
