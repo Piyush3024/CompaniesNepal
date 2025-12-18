@@ -183,26 +183,16 @@ model company_users {
   @@index([company_id], map: "company_id")
 }
 
-model countries {
-  id         Int       @id @default(autoincrement())
-  name       String    @db.VarChar(100)
-  code       String    @unique(map: "code") @db.VarChar(3)
-  phone_code String?   @db.VarChar(5)
-  created_at DateTime  @default(now()) @db.Timestamp(0)
-  updated_at DateTime? @default(now()) @db.Timestamp(0)
-  states     states[]
-}
-
 model districts {
-  id         Int       @id @default(autoincrement())
-  state_id   Int
-  name       String    @db.VarChar(100)
-  created_at DateTime  @default(now()) @db.Timestamp(0)
-  updated_at DateTime? @default(now()) @db.Timestamp(0)
-  cities     cities[]
-  states     states    @relation(fields: [state_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "districts_ibfk_1")
+  id          Int       @id @default(autoincrement())
+  province_id Int
+  name        String    @db.VarChar(100)
+  created_at  DateTime  @default(now()) @db.Timestamp(0)
+  updated_at  DateTime? @default(now()) @db.Timestamp(0)
+  cities      cities[]
+  provinces   provinces @relation(fields: [province_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "districts_ibfk_1")
 
-  @@index([state_id], map: "state_id")
+  @@index([province_id], map: "province_id")
 }
 
 model inquiries {
@@ -339,17 +329,13 @@ model saved_products {
   @@index([product_id], map: "product_id")
 }
 
-model states {
+model provinces {
   id         Int         @id @default(autoincrement())
-  country_id Int
   name       String      @db.VarChar(100)
   code       String?     @db.VarChar(10)
   created_at DateTime    @default(now()) @db.Timestamp(0)
   updated_at DateTime?   @default(now()) @db.Timestamp(0)
   districts  districts[]
-  countries  countries   @relation(fields: [country_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "states_ibfk_1")
-
-  @@index([country_id], map: "country_id")
 }
 
 model status {

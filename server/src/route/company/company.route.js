@@ -1,5 +1,5 @@
 import express from "express";
-import { authorizeRoles } from "../middleware/middleware.js";
+import { authorizeRoles } from "../../middleware/middleware.js";
 const router = express.Router();
 
 import {
@@ -14,8 +14,8 @@ import {
   togglePremiumCompanyStatus,
   toggleBlockedCompanyStatus,
   getCompanyNameAccordingToRating,
-} from "../controller/company.controller.js";
-import { protectRoute } from "../middleware/middleware.js";
+} from "../../controller/company/company.controller.js";
+import { protectRoute } from "../../middleware/middleware.js";
 
 router.get("/", fetchCompany);
 router.post(

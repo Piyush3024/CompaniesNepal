@@ -1,6 +1,6 @@
 import pkg from "@prisma/client";
 const { PrismaClient } = pkg;
-import { hashId, decodeHashId } from "../randomgenerator.js";
+import { hashId, decodeHashId } from "../../randomgenerator.js";
 
 const prisma = new PrismaClient();
 
@@ -877,3 +877,4 @@ export {
   getNearbyCompaniesController,
   getCompanyNameAccordingToRating,
 };
+

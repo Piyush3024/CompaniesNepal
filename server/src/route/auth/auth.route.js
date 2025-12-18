@@ -1,10 +1,10 @@
 import express from "express"
 const router = express.Router() 
 
-import { resendVerification, login, signup,verifyEmail,refreshToken ,getProfile, resetPassword , forgotPassword , logout} from "../controller/auth.controller.js"
-import {protectRoute , strictLimiter} from "../middleware/middleware.js"
-import passport from '../config/passport.js';
-import { validateLogin, handleValidationErrors, validateRegistration,  validateForgot, validateResetPassword } from "../middleware/validation/auth/auth.middleware.js";
+import { resendVerification, login, signup,verifyEmail,refreshToken ,getProfile, resetPassword , forgotPassword , logout} from "../../controller/auth/auth.controller.js"
+import {protectRoute , strictLimiter} from "../../middleware/middleware.js"
+import passport from '../../config/passport.js';
+import { validateLogin, handleValidationErrors, validateRegistration,  validateForgot, validateResetPassword } from "../../middleware/validation/auth/auth.middleware.js";
 
 router.post("/register",strictLimiter,validateRegistration, handleValidationErrors, signup)
 router.get("/verify/:token" , verifyEmail)

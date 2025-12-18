@@ -1,10 +1,10 @@
 import pkg from "@prisma/client";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { redis } from "../lib/redis.js";
-import sendVerificationEmail from "../lib/mailer.js";
-import { sendEmail, emailTemplates } from "../config/email.config.js";
-import { encodeId, decodeId } from "../lib/secure.js";
+import { redis } from "../../lib/redis.js";
+import sendVerificationEmail from "../../lib/mailer.js";
+import { sendEmail, emailTemplates } from "../../config/email.config.js";
+import { encodeId, decodeId } from "../../lib/secure.js";
 
 const { PrismaClient } = pkg;
 const prisma = new PrismaClient();

@@ -10,8 +10,9 @@ import passport from "../src/config/passport.js";
 const app = express();
 app.use(express.json());
 
-import authRoutes from "../src/route/auth.route.js";
-import companyRoutes from "../src/route/company.route.js";
+import authRoutes from "../src/route/auth/auth.route.js";
+import locationRoutes from "../src/route/location/location.route.js";
+import companyRoutes from "../src/route/company/company.route.js";
 import userRoutes from "../src/route/user.route.js";
 import categoriesRoutes from "../src/route/categories.route.js";
 import inquiriesRoutes from "../src/route/inquiries.route.js";
@@ -188,6 +189,7 @@ const setupRequestTracking = () => {
 
 const setupRoutes = () => {
   app.use("/auth", authRoutes);
+  app.use("/location", locationRoutes);
   app.use("/companies", companyRoutes);
   app.use("/user", userRoutes);
   app.use("/categories", categoriesRoutes);
