@@ -56,13 +56,22 @@ export const login = async (req, res) => {
     const loginIdentifier = username || email;
 
 
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.findFirst({
       where: {
         OR: [
           { email: loginIdentifier },
           { username: loginIdentifier }
         ]
       },
+      include:{
+        role: {
+          select: {
+            role_id: true,
+            name: true,
+            
+          },
+        }
+      }
     });
 
     if (!user) {

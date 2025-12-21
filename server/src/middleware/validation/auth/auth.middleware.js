@@ -39,9 +39,9 @@ export const validateLogin = [
             const { email } = req.body;
 
 
-            if (!email) {
-                throw new Error('Login credentials are required');
-            }
+            // if (!email) {
+            //     throw new Error('Login credentials are required');
+            // }
 
 
             if (email) {
