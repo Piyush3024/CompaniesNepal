@@ -87,6 +87,9 @@ CREATE TABLE `companies` (
     INDEX `created_by`(`created_by`),
     INDEX `verification_status_id`(`verification_status_id`),
     INDEX `avg_rating_company_index`(`average_rating`, `total_reviews`),
+    INDEX `companies_is_verified_is_premium_is_blocked_idx`(`is_verified`, `is_premium`, `is_blocked`),
+    INDEX `companies_company_type_id_area_id_idx`(`company_type_id`, `area_id`),
+    INDEX `companies_created_at_idx`(`created_at`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -110,9 +113,13 @@ CREATE TABLE `company_branches` (
 -- CreateTable
 CREATE TABLE `company_categories` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(191) NOT NULL,
     `company_id` INTEGER NOT NULL,
+    `category_id` INTEGER NOT NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
+    INDEX `company_categories_category_id_idx`(`category_id`),
+    INDEX `company_categories_company_id_idx`(`company_id`),
+    UNIQUE INDEX `company_categories_company_id_category_id_key`(`company_id`, `category_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -288,6 +295,9 @@ CREATE TABLE `products` (
     INDEX `avg_rating_index`(`average_rating`, `total_reviews`),
     INDEX `category_id`(`category_id`),
     INDEX `company_id`(`company_id`),
+    INDEX `products_is_featured_category_id_idx`(`is_featured`, `category_id`),
+    INDEX `products_company_id_category_id_idx`(`company_id`, `category_id`),
+    INDEX `products_created_at_idx`(`created_at`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -417,7 +427,10 @@ ALTER TABLE `company_branches` ADD CONSTRAINT `company_branches_ibfk_1` FOREIGN 
 ALTER TABLE `company_branches` ADD CONSTRAINT `company_branches_ibfk_2` FOREIGN KEY (`area_id`) REFERENCES `areas`(`id`) ON DELETE SET NULL ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE `company_categories` ADD CONSTRAINT `company_categories_company_id_fkey` FOREIGN KEY (`company_id`) REFERENCES `companies`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `company_categories` ADD CONSTRAINT `company_categories_company_id_fkey` FOREIGN KEY (`company_id`) REFERENCES `companies`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `company_categories` ADD CONSTRAINT `company_categories_category_id_fkey` FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `company_inquiries` ADD CONSTRAINT `company_inquiries_inquiry_id_fkey` FOREIGN KEY (`inquiry_id`) REFERENCES `inquiries`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

@@ -1,134 +1,139 @@
-import { PrismaClient } from "@prisma/client";
+
+
+import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
-import bcrypt from "bcrypt";
 
-try {
-  async function seed() {
+async function main() {
+    console.log('🌱 Starting database seeding...');
+
+    console.log('📦 Seeding company types...');
+    const companyTypes = [
+        'Manufacturer',
+        'Supplier',
+        'Wholesaler',
+        'Retailer',
+        'Distributor',
+        'Service Provider',
+        'Exporter',
+        'Importer',
+        'Trading Company',
+        'Agent/Representative',
+    ];
+
+    for (const typeName of companyTypes) {
+        await prisma.company_type.upsert({
+            where: { name: typeName },
+            update: {},
+            create: {
+                name: typeName,
+                created_at: new Date(),
+                updated_at: new Date(),
+            },
+        });
+    }
+    console.log('✅ Company types seeded successfully!');
+
+
+    console.log('📦 Seeding inquiry types...');
+    const inquiryTypes = [
+        'Product Inquiry',
+        'Quote Request',
+        'Bulk Order',
+        'Sample Request',
+        'Custom Order',
+        'General Inquiry',
+        'Technical Support',
+        'Partnership',
+    ];
+
+    for (const typeName of inquiryTypes) {
+        await prisma.inquiries_type.upsert({
+            where: { id: inquiryTypes.indexOf(typeName) + 1 },
+            update: {},
+            create: {
+                name: typeName,
+                created_at: new Date(),
+                updated_at: new Date(),
+            },
+        });
+    }
+    console.log('✅ Inquiry types seeded successfully!');
+
+ 
+    console.log('📦 Seeding verification statuses...');
+    const verificationStatuses = [
+        'Pending',
+        'Verified',
+        'Rejected',
+        'Under Review',
+        'Suspended',
+    ];
+
+    for (const statusName of verificationStatuses) {
+        await prisma.verification_status.upsert({
+            where: { status_name: statusName },
+            update: {},
+            create: {
+                status_name: statusName,
+                created_at: new Date(),
+                updated_at: new Date(),
+            },
+        });
+    }
+    console.log('✅ Verification statuses seeded successfully!');
+
+    console.log('📦 Seeding roles...');
     const roles = [
-      {
-        role_id: 1,
-        name: "buyer",
-      },
-      {
-        role_id: 2,
-        name: "seller",
-      },
-      {
-        role_id: 3,
-        name: "admin",
-      },
+        'admin',
+        'seller',
+        'buyer',
+        'user',
     ];
 
-    for (const role of roles) {
-      await prisma.role.upsert({
-        where: {
-          role_id: role.role_id,
-        },
-        update: {},
-        create: role,
-      });
+    for (const roleName of roles) {
+        await prisma.role.upsert({
+            where: { name: roleName },
+            update: {},
+            create: {
+                name: roleName,
+                created_at: new Date(),
+                updated_at: new Date(),
+            },
+        });
     }
+    console.log('✅ Roles seeded successfully!');
 
+    console.log('📦 Seeding user statuses...');
     const statuses = [
-      {
-        status_id: 1,
-        name: "approved",
-      },
-      {
-        status_id: 2,
-        name: "verified",
-      },
-      {
-        status_id: 3,
-        name: "rejected",
-      },
+        'Active',
+        'Inactive',
+        'Pending',
+        'Suspended',
+        'Banned',
     ];
 
-    for (const status of statuses) {
-      await prisma.status.upsert({
-        where: {
-          status_id: status.status_id,
-        },
-        update: {},
-        create: status,
-      });
+    for (const statusName of statuses) {
+        await prisma.status.upsert({
+            where: { name: statusName },
+            update: {},
+            create: {
+                name: statusName,
+                created_at: new Date(),
+                updated_at: new Date(),
+            },
+        });
     }
-    const password1 = await bcrypt.hash("adminPass123", 12);
-    const password2 = await bcrypt.hash("buyerPass456", 12);
-    const password3 = await bcrypt.hash("sellerPass789", 12);
-    const password4 = await bcrypt.hash("buyerTwoPass", 12);
-    const password5 = await bcrypt.hash("sellerTwoPass", 12);
+    console.log('✅ User statuses seeded successfully!');
 
-    const users = [
-      {
-        id: 1,
-        username: "AdminShiva",
-        email: "admin1@example.com",
-        password: password1,
-        role_id: 3,
-        status_id: 1,
-        email_verified: true,
-      },
-      {
-        id: 2,
-        username: "BuyerSita",
-        email: "buyer1@example.com",
-        password: password2,
-        role_id: 1,
-        status_id: 2,
-        email_verified: true,
-      },
-      {
-        id: 3,
-        username: "SellerRam",
-        email: "seller1@example.com",
-        password: password3,
-        role_id: 2,
-        status_id: 1,
-        email_verified: true,
-      },
-      {
-        id: 4,
-        username: "BuyerGita",
-        email: "buyer2@example.com",
-        password: password4,
-        role_id: 1,
-        status_id: 1,
-        email_verified: true,
-      },
-      {
-        id: 5,
-        username: "SellerHari",
-        email: "seller2@example.com",
-        password: password5,
-        role_id: 2,
-        status_id: 2,
-        email_verified: true,
-      },
-    ];
-
-    const password = await bcrypt.hash("hello", 12);
-    for (const user of users) {
-      await prisma.user.upsert({
-        where: {
-          email: user.email,
-        },
-        update: {},
-        create: {
-          ...user,
-          created_at: new Date(),
-          updated_at: new Date(),
-        },
-      });
-    }
-    console.log("✅ Seeding complete with different users!");
-  }
-  seed();
-} catch (error) {
-  console.log(error);
-  process.exit(1);
-} finally {
-  async () => {
-    await prisma.$disconnect();
-  };
+   
+    console.log('🎉 Database seeding completed!');
 }
+
+main()
+    .catch((e) => {
+        console.error('❌ Error during seeding:', e);
+        process.exit(1);
+    })
+    .finally(async () => {
+        await prisma.$disconnect();
+    });

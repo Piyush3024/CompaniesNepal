@@ -38,17 +38,18 @@ model bookmarked_inquiries {
 }
 
 model categories {
-  id          Int          @id @default(autoincrement())
-  name        String       @unique(map: "name") @db.VarChar(100)
-  parent_id   Int?
-  parent      categories?  @relation("Subcategories", fields: [parent_id], references: [id])
-  children    categories[] @relation("Subcategories")
-  image_url   String?      @db.Text
-  created_at  DateTime     @default(now()) @db.Timestamp(0)
-  updated_at  DateTime?    @default(now()) @db.Timestamp(0)
-  slug        String?      @unique @db.VarChar(255)
-  description String?      @db.Text
-  products    products[]
+  id                 Int                  @id @default(autoincrement())
+  name               String               @unique(map: "name") @db.VarChar(100)
+  parent_id          Int?
+  parent             categories?          @relation("Subcategories", fields: [parent_id], references: [id])
+  children           categories[]         @relation("Subcategories")
+  image_url          String?              @db.Text
+  created_at         DateTime             @default(now()) @db.Timestamp(0)
+  updated_at         DateTime?            @default(now()) @db.Timestamp(0)
+  slug               String?              @unique @db.VarChar(255)
+  description        String?              @db.Text
+  products           products[]
+  company_categories company_categories[]
 }
 
 model cities {
@@ -96,7 +97,7 @@ model companies {
   user                   user                 @relation(fields: [created_by], references: [id], onUpdate: NoAction, map: "companies_ibfk_4")
   company_branches       company_branches[]
   company_reviews        company_reviews[]
-  company_users          company_users[]  
+  company_users          company_users[]
   inquiries              inquiries[]
   products               products[]
   company_categories     company_categories[]
@@ -107,6 +108,9 @@ model companies {
   @@index([created_by], map: "created_by")
   @@index([verification_status_id], map: "verification_status_id")
   @@index([average_rating, total_reviews], name: "avg_rating_company_index")
+  @@index([is_verified, is_premium, is_blocked]) // Filter verified/premium companies
+  @@index([company_type_id, area_id]) // Location + type filter
+  @@index([created_at]) // Latest companies
 }
 
 model company_branches {
@@ -127,10 +131,16 @@ model company_branches {
 }
 
 model company_categories {
-  id         Int       @id @default(autoincrement())
-  name       String
-  company_id Int
-  companies  companies @relation(fields: [company_id], references: [id])
+  id          Int        @id @default(autoincrement())
+  company_id  Int
+  category_id Int
+  created_at  DateTime   @default(now())
+  company     companies  @relation(fields: [company_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  category    categories @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([company_id, category_id]) // Prevent duplicates
+  @@index([category_id])
+  @@index([company_id])
 }
 
 model company_inquiries {
@@ -306,6 +316,9 @@ model products {
   @@index([average_rating, total_reviews], name: "avg_rating_index")
   @@index([category_id], map: "category_id")
   @@index([company_id], map: "company_id")
+  @@index([is_featured, category_id]) // Featured products by category
+  @@index([company_id, category_id]) // Company's products by category
+  @@index([created_at]) // Latest products
 }
 
 model role {
