@@ -38,7 +38,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 const IS_PRODUCTION = NODE_ENV === "production";
-console.log("is production", IS_PRODUCTION);
+
 
 if (!IS_PRODUCTION) {
   app.use(morgan("dev"));
