@@ -9,17 +9,17 @@ const getAllProvinces = async (req, res) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: "User not authenticated"
+        message: "User not authenticated",
       });
     }
     const provinces = await prisma.provinces.findMany();
     if (!provinces || provinces.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "No provinces found."
+        message: "No provinces found.",
       });
     }
-    const hashedProvinces = provinces.map(province => ({
+    const hashedProvinces = provinces.map((province) => ({
       ...province,
       id: encodeId(province.id),
     }));
@@ -42,7 +42,7 @@ const createProvince = async (req, res) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: "User not authenticated"
+        message: "User not authenticated",
       });
     }
 
@@ -51,8 +51,13 @@ const createProvince = async (req, res) => {
     const newProvince = await prisma.provinces.create({
       data: {
         name,
-        code: code || null
-      }
+        code: code || null,
+      },
+      select: {
+        id: true,
+        name: true,
+        code: true,
+      },
     });
 
     return res.status(201).json({
@@ -60,15 +65,15 @@ const createProvince = async (req, res) => {
       message: "State created successfully",
       data: {
         ...newProvince,
-        id: encodeId(newProvince.id)
-      }
+        id: encodeId(newProvince.id),
+      },
     });
   } catch (error) {
     console.error("Error in createProvince:", error);
     return res.status(500).json({
       success: false,
       message: "Error creating state",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -79,11 +84,13 @@ const getProvinceById = async (req, res) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: "User not authenticated"
+        message: "User not authenticated",
       });
     }
     const { provinceId } = req.params;
-    const decodedId = decodeId(provinceId)[0];
+    console.log("Encoded Province ID:", provinceId);
+    const decodedId = decodeId(provinceId);
+    console.log("Decoded Province ID:", decodedId);
     if (!decodedId) {
       return res.status(400).json({
         success: false,
@@ -92,7 +99,12 @@ const getProvinceById = async (req, res) => {
     }
     const province = await prisma.provinces.findUnique({
       where: {
-        id: parseInt(decodedId)
+        id: parseInt(decodedId),
+      },
+      select: {
+        id: true,
+        name: true,
+        code: true,
       },
     });
     if (!province) {
@@ -105,7 +117,7 @@ const getProvinceById = async (req, res) => {
       success: true,
       data: {
         ...province,
-        id: encodeId(province.id)
+        id: encodeId(province.id),
       },
     });
   } catch (error) {
@@ -123,17 +135,17 @@ const updateProvince = async (req, res) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: "User not authenticated"
+        message: "User not authenticated",
       });
     }
 
-    const { stateId } = req.params;
-    const decodedId = decodeId(stateId);
+    const { provinceId } = req.params;
+    const decodedId = decodeId(provinceId);
 
     if (!decodedId) {
       return res.status(400).json({
         success: false,
-        message: "Invalid state ID"
+        message: "Invalid state ID",
       });
     }
 
@@ -145,7 +157,12 @@ const updateProvince = async (req, res) => {
 
     const updatedProvince = await prisma.provinces.update({
       where: { id: parseInt(decodedId) },
-      data: updateData
+      data: updateData,
+      select: {
+        id: true,
+        name: true,
+        code: true,
+      },
     });
 
     return res.status(200).json({
@@ -153,23 +170,23 @@ const updateProvince = async (req, res) => {
       message: "State updated successfully",
       data: {
         ...updatedProvince,
-        id: encodeId(updatedProvince.id)
-      }
+        id: encodeId(updatedProvince.id),
+      },
     });
   } catch (error) {
     console.error("Error in updateProvince:", error);
 
-    if (error.code === 'P2025') {
+    if (error.code === "P2025") {
       return res.status(404).json({
         success: false,
-        message: "State not found"
+        message: "State not found",
       });
     }
 
     return res.status(500).json({
       success: false,
       message: "Error updating state",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -179,7 +196,7 @@ const deleteProvince = async (req, res) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: "User not authenticated"
+        message: "User not authenticated",
       });
     }
 
@@ -189,37 +206,35 @@ const deleteProvince = async (req, res) => {
     if (!decodedId) {
       return res.status(400).json({
         success: false,
-        message: "Invalid state ID"
+        message: "Invalid state ID",
       });
     }
 
     await prisma.provinces.delete({
-      where: { id: parseInt(decodedId) }
+      where: { id: parseInt(decodedId) },
     });
 
     return res.status(200).json({
       success: true,
-      message: "State deleted successfully"
+      message: "State deleted successfully",
     });
   } catch (error) {
     console.error("Error in deleteProvince:", error);
 
-    if (error.code === 'P2025') {
+    if (error.code === "P2025") {
       return res.status(404).json({
         success: false,
-        message: "State not found"
+        message: "State not found",
       });
     }
 
     return res.status(500).json({
       success: false,
       message: "Error deleting state",
-      error: error.message
+      error: error.message,
     });
   }
 };
-
-
 
 //  Get districts by province (cascading dropdown)
 const getDistrictsByProvince = async (req, res) => {
@@ -227,11 +242,11 @@ const getDistrictsByProvince = async (req, res) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: "User not authenticated"
+        message: "User not authenticated",
       });
     }
     const { provinceId } = req.params;
-    const decodedId = decodeId(provinceId)[0];
+    const decodedId = decodeId(provinceId);
     if (!decodedId) {
       return res.status(400).json({
         success: false,
@@ -240,16 +255,16 @@ const getDistrictsByProvince = async (req, res) => {
     }
     const districts = await prisma.districts.findMany({
       where: {
-        province_id: parseInt(decodedId)
+        province_id: parseInt(decodedId),
       },
     });
     if (!districts || districts.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "No districts found."
+        message: "No districts found.",
       });
     }
-    const hashedDistricts = districts.map(district => ({
+    const hashedDistricts = districts.map((district) => ({
       ...district,
       id: encodeId(district.id),
       province_id: encodeId(district.province_id),
@@ -274,17 +289,17 @@ const getAllDistricts = async (req, res) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: "User not authenticated"
+        message: "User not authenticated",
       });
     }
     const districts = await prisma.districts.findMany();
     if (!districts || districts.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "No districts found."
+        message: "No districts found.",
       });
     }
-    const hashedDistricts = districts.map(district => ({
+    const hashedDistricts = districts.map((district) => ({
       ...district,
       id: encodeId(district.id),
       province_id: encodeId(district.province_id),
@@ -303,31 +318,30 @@ const getAllDistricts = async (req, res) => {
   }
 };
 
-
 const createDistrict = async (req, res) => {
   try {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: "User not authenticated"
+        message: "User not authenticated",
       });
     }
 
-    const { name, state_id } = req.body;
-    const decodedStateId = decodeId(state_id);
+    const { name, province_id } = req.body;
+    const decodedProvinceId = decodeId(province_id);
 
-    if (!decodedStateId) {
+    if (!decodedProvinceId) {
       return res.status(400).json({
         success: false,
-        message: "Invalid state ID"
+        message: "Invalid state ID",
       });
     }
 
     const newDistrict = await prisma.districts.create({
       data: {
         name,
-        state_id: parseInt(decodedStateId)
-      }
+        province_id: parseInt(decodedProvinceId),
+      },
     });
 
     return res.status(201).json({
@@ -336,23 +350,23 @@ const createDistrict = async (req, res) => {
       data: {
         ...newDistrict,
         id: encodeId(newDistrict.id),
-        state_id: encodeId(newDistrict.state_id)
-      }
+        province_id: encodeId(newDistrict.province_id),
+      },
     });
   } catch (error) {
     console.error("Error in createDistrict:", error);
 
-    if (error.code === 'P2003') {
+    if (error.code === "P2003") {
       return res.status(404).json({
         success: false,
-        message: "State not found"
+        message: "State not found",
       });
     }
 
     return res.status(500).json({
       success: false,
       message: "Error creating district",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -362,7 +376,7 @@ const updateDistrict = async (req, res) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: "User not authenticated"
+        message: "User not authenticated",
       });
     }
 
@@ -372,29 +386,29 @@ const updateDistrict = async (req, res) => {
     if (!decodedId) {
       return res.status(400).json({
         success: false,
-        message: "Invalid district ID"
+        message: "Invalid district ID",
       });
     }
 
-    const { name, state_id } = req.body;
+    const { name, province_id } = req.body;
     const updateData = {};
 
     if (name) updateData.name = name;
-    if (state_id) {
-      const decodedStateId = decodeId(state_id);
-      if (!decodedStateId) {
+    if (province_id) {
+      const decodedProvinceId = decodeId(province_id);
+      if (!decodedProvinceId) {
         return res.status(400).json({
           success: false,
-          message: "Invalid state ID"
+          message: "Invalid state ID",
         });
       }
-      updateData.state_id = parseInt(decodedStateId);
+      updateData.province_id = parseInt(decodedProvinceId);
     }
     updateData.updated_at = new Date();
 
     const updatedDistrict = await prisma.districts.update({
       where: { id: parseInt(decodedId) },
-      data: updateData
+      data: updateData,
     });
 
     return res.status(200).json({
@@ -403,30 +417,30 @@ const updateDistrict = async (req, res) => {
       data: {
         ...updatedDistrict,
         id: encodeId(updatedDistrict.id),
-        state_id: encodeId(updatedDistrict.state_id)
-      }
+        province_id: encodeId(updatedDistrict.province_id),
+      },
     });
   } catch (error) {
     console.error("Error in updateDistrict:", error);
 
-    if (error.code === 'P2025') {
+    if (error.code === "P2025") {
       return res.status(404).json({
         success: false,
-        message: "District not found"
+        message: "District not found",
       });
     }
 
-    if (error.code === 'P2003') {
+    if (error.code === "P2003") {
       return res.status(404).json({
         success: false,
-        message: "State not found"
+        message: "State not found",
       });
     }
 
     return res.status(500).json({
       success: false,
       message: "Error updating district",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -436,7 +450,7 @@ const deleteDistrict = async (req, res) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: "User not authenticated"
+        message: "User not authenticated",
       });
     }
 
@@ -446,43 +460,41 @@ const deleteDistrict = async (req, res) => {
     if (!decodedId) {
       return res.status(400).json({
         success: false,
-        message: "Invalid district ID"
+        message: "Invalid district ID",
       });
     }
 
     await prisma.districts.delete({
-      where: { id: parseInt(decodedId) }
+      where: { id: parseInt(decodedId) },
     });
 
     return res.status(200).json({
       success: true,
-      message: "District deleted successfully"
+      message: "District deleted successfully",
     });
   } catch (error) {
     console.error("Error in deleteDistrict:", error);
 
-    if (error.code === 'P2025') {
+    if (error.code === "P2025") {
       return res.status(404).json({
         success: false,
-        message: "District not found"
+        message: "District not found",
       });
     }
 
     return res.status(500).json({
       success: false,
       message: "Error deleting district",
-      error: error.message
+      error: error.message,
     });
   }
 };
 
-
 //  Get cities by district (cascading dropdown)
 const getCitiesByDistrict = async (req, res) => {
   try {
-
     const { districtId } = req.params;
-    const decodedId = decodeId(districtId)[0];
+    const decodedId = decodeId(districtId);
     if (!decodedId) {
       return res.status(400).json({
         success: false,
@@ -491,16 +503,16 @@ const getCitiesByDistrict = async (req, res) => {
     }
     const cities = await prisma.cities.findMany({
       where: {
-        district_id: parseInt(decodedId)
+        district_id: parseInt(decodedId),
       },
     });
     if (!cities || cities.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "No cities found."
+        message: "No cities found.",
       });
     }
-    const hashedCities = cities.map(city => ({
+    const hashedCities = cities.map((city) => ({
       ...city,
       id: encodeId(city.id),
       district_id: encodeId(city.district_id),
@@ -525,17 +537,17 @@ const getAllCities = async (req, res) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: "User not authenticated"
+        message: "User not authenticated",
       });
     }
     const cities = await prisma.cities.findMany();
     if (!cities || cities.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "No cities found."
+        message: "No cities found.",
       });
     }
-    const hashedCities = cities.map(city => ({
+    const hashedCities = cities.map((city) => ({
       ...city,
       id: encodeId(city.id),
       district_id: encodeId(city.district_id),
@@ -559,7 +571,7 @@ const createCity = async (req, res) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: "User not authenticated"
+        message: "User not authenticated",
       });
     }
 
@@ -569,15 +581,15 @@ const createCity = async (req, res) => {
     if (!decodedDistrictId) {
       return res.status(400).json({
         success: false,
-        message: "Invalid district ID"
+        message: "Invalid district ID",
       });
     }
 
     const newCity = await prisma.cities.create({
       data: {
         name,
-        district_id: parseInt(decodedDistrictId)
-      }
+        district_id: parseInt(decodedDistrictId),
+      },
     });
 
     return res.status(201).json({
@@ -586,23 +598,23 @@ const createCity = async (req, res) => {
       data: {
         ...newCity,
         id: encodeId(newCity.id),
-        district_id: encodeId(newCity.district_id)
-      }
+        district_id: encodeId(newCity.district_id),
+      },
     });
   } catch (error) {
     console.error("Error in createCity:", error);
 
-    if (error.code === 'P2003') {
+    if (error.code === "P2003") {
       return res.status(404).json({
         success: false,
-        message: "District not found"
+        message: "District not found",
       });
     }
 
     return res.status(500).json({
       success: false,
       message: "Error creating city",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -612,7 +624,7 @@ const updateCity = async (req, res) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: "User not authenticated"
+        message: "User not authenticated",
       });
     }
 
@@ -622,7 +634,7 @@ const updateCity = async (req, res) => {
     if (!decodedId) {
       return res.status(400).json({
         success: false,
-        message: "Invalid city ID"
+        message: "Invalid city ID",
       });
     }
 
@@ -635,7 +647,7 @@ const updateCity = async (req, res) => {
       if (!decodedDistrictId) {
         return res.status(400).json({
           success: false,
-          message: "Invalid district ID"
+          message: "Invalid district ID",
         });
       }
       updateData.district_id = parseInt(decodedDistrictId);
@@ -644,7 +656,7 @@ const updateCity = async (req, res) => {
 
     const updatedCity = await prisma.cities.update({
       where: { id: parseInt(decodedId) },
-      data: updateData
+      data: updateData,
     });
 
     return res.status(200).json({
@@ -653,30 +665,30 @@ const updateCity = async (req, res) => {
       data: {
         ...updatedCity,
         id: encodeId(updatedCity.id),
-        district_id: encodeId(updatedCity.district_id)
-      }
+        district_id: encodeId(updatedCity.district_id),
+      },
     });
   } catch (error) {
     console.error("Error in updateCity:", error);
 
-    if (error.code === 'P2025') {
+    if (error.code === "P2025") {
       return res.status(404).json({
         success: false,
-        message: "City not found"
+        message: "City not found",
       });
     }
 
-    if (error.code === 'P2003') {
+    if (error.code === "P2003") {
       return res.status(404).json({
         success: false,
-        message: "District not found"
+        message: "District not found",
       });
     }
 
     return res.status(500).json({
       success: false,
       message: "Error updating city",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -686,7 +698,7 @@ const deleteCity = async (req, res) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: "User not authenticated"
+        message: "User not authenticated",
       });
     }
 
@@ -696,32 +708,32 @@ const deleteCity = async (req, res) => {
     if (!decodedId) {
       return res.status(400).json({
         success: false,
-        message: "Invalid city ID"
+        message: "Invalid city ID",
       });
     }
 
     await prisma.cities.delete({
-      where: { id: parseInt(decodedId) }
+      where: { id: parseInt(decodedId) },
     });
 
     return res.status(200).json({
       success: true,
-      message: "City deleted successfully"
+      message: "City deleted successfully",
     });
   } catch (error) {
     console.error("Error in deleteCity:", error);
 
-    if (error.code === 'P2025') {
+    if (error.code === "P2025") {
       return res.status(404).json({
         success: false,
-        message: "City not found"
+        message: "City not found",
       });
     }
 
     return res.status(500).json({
       success: false,
       message: "Error deleting city",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -729,9 +741,8 @@ const deleteCity = async (req, res) => {
 //  Get areas by city (final dropdown for address)
 const getAreasByCity = async (req, res) => {
   try {
-
     const { cityId } = req.params;
-    const decodedId = decodeId(cityId)[0];
+    const decodedId = decodeId(cityId);
     if (!decodedId) {
       return res.status(400).json({
         success: false,
@@ -740,16 +751,16 @@ const getAreasByCity = async (req, res) => {
     }
     const areas = await prisma.areas.findMany({
       where: {
-        city_id: parseInt(decodedId)
+        city_id: parseInt(decodedId),
       },
     });
     if (!areas || areas.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "No areas found."
+        message: "No areas found.",
       });
     }
-    const hashedAreas = areas.map(area => ({
+    const hashedAreas = areas.map((area) => ({
       ...area,
       id: encodeId(area.id),
       city_id: encodeId(area.city_id),
@@ -774,17 +785,17 @@ const getAllAreas = async (req, res) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: "User not authenticated"
+        message: "User not authenticated",
       });
     }
     const areas = await prisma.areas.findMany();
     if (!areas || areas.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "No areas found."
+        message: "No areas found.",
       });
     }
-    const hashedAreas = areas.map(area => ({
+    const hashedAreas = areas.map((area) => ({
       ...area,
       id: encodeId(area.id),
       city_id: encodeId(area.city_id),
@@ -808,7 +819,7 @@ const createArea = async (req, res) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: "User not authenticated"
+        message: "User not authenticated",
       });
     }
 
@@ -818,14 +829,14 @@ const createArea = async (req, res) => {
     if (!decodedCityId) {
       return res.status(400).json({
         success: false,
-        message: "Invalid city ID"
+        message: "Invalid city ID",
       });
     }
 
     const createData = {
       name,
       city_id: parseInt(decodedCityId),
-      postal_code: postal_code || null
+      postal_code: postal_code || null,
     };
 
     if (nearby_id) {
@@ -833,14 +844,14 @@ const createArea = async (req, res) => {
       if (!decodedNearbyId) {
         return res.status(400).json({
           success: false,
-          message: "Invalid nearby area ID"
+          message: "Invalid nearby area ID",
         });
       }
       createData.nearby_id = parseInt(decodedNearbyId);
     }
 
     const newArea = await prisma.areas.create({
-      data: createData
+      data: createData,
     });
 
     return res.status(201).json({
@@ -850,23 +861,23 @@ const createArea = async (req, res) => {
         ...newArea,
         id: encodeId(newArea.id),
         city_id: encodeId(newArea.city_id),
-        nearby_id: newArea.nearby_id ? encodeId(newArea.nearby_id) : null
-      }
+        nearby_id: newArea.nearby_id ? encodeId(newArea.nearby_id) : null,
+      },
     });
   } catch (error) {
     console.error("Error in createArea:", error);
 
-    if (error.code === 'P2003') {
+    if (error.code === "P2003") {
       return res.status(404).json({
         success: false,
-        message: "City or nearby area not found"
+        message: "City or nearby area not found",
       });
     }
 
     return res.status(500).json({
       success: false,
       message: "Error creating area",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -876,7 +887,7 @@ const updateArea = async (req, res) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: "User not authenticated"
+        message: "User not authenticated",
       });
     }
 
@@ -886,7 +897,7 @@ const updateArea = async (req, res) => {
     if (!decodedId) {
       return res.status(400).json({
         success: false,
-        message: "Invalid area ID"
+        message: "Invalid area ID",
       });
     }
 
@@ -901,21 +912,21 @@ const updateArea = async (req, res) => {
       if (!decodedCityId) {
         return res.status(400).json({
           success: false,
-          message: "Invalid city ID"
+          message: "Invalid city ID",
         });
       }
       updateData.city_id = parseInt(decodedCityId);
     }
 
     if (nearby_id !== undefined) {
-      if (nearby_id === null || nearby_id === '') {
+      if (nearby_id === null || nearby_id === "") {
         updateData.nearby_id = null;
       } else {
         const decodedNearbyId = decodeId(nearby_id);
         if (!decodedNearbyId) {
           return res.status(400).json({
             success: false,
-            message: "Invalid nearby area ID"
+            message: "Invalid nearby area ID",
           });
         }
         updateData.nearby_id = parseInt(decodedNearbyId);
@@ -926,7 +937,7 @@ const updateArea = async (req, res) => {
 
     const updatedArea = await prisma.areas.update({
       where: { id: parseInt(decodedId) },
-      data: updateData
+      data: updateData,
     });
 
     return res.status(200).json({
@@ -936,30 +947,32 @@ const updateArea = async (req, res) => {
         ...updatedArea,
         id: encodeId(updatedArea.id),
         city_id: encodeId(updatedArea.city_id),
-        nearby_id: updatedArea.nearby_id ? encodeId(updatedArea.nearby_id) : null
-      }
+        nearby_id: updatedArea.nearby_id
+          ? encodeId(updatedArea.nearby_id)
+          : null,
+      },
     });
   } catch (error) {
     console.error("Error in updateArea:", error);
 
-    if (error.code === 'P2025') {
+    if (error.code === "P2025") {
       return res.status(404).json({
         success: false,
-        message: "Area not found"
+        message: "Area not found",
       });
     }
 
-    if (error.code === 'P2003') {
+    if (error.code === "P2003") {
       return res.status(404).json({
         success: false,
-        message: "City or nearby area not found"
+        message: "City or nearby area not found",
       });
     }
 
     return res.status(500).json({
       success: false,
       message: "Error updating area",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -969,7 +982,7 @@ const deleteArea = async (req, res) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: "User not authenticated"
+        message: "User not authenticated",
       });
     }
 
@@ -979,36 +992,35 @@ const deleteArea = async (req, res) => {
     if (!decodedId) {
       return res.status(400).json({
         success: false,
-        message: "Invalid area ID"
+        message: "Invalid area ID",
       });
     }
 
     await prisma.areas.delete({
-      where: { id: parseInt(decodedId) }
+      where: { id: parseInt(decodedId) },
     });
 
     return res.status(200).json({
       success: true,
-      message: "Area deleted successfully"
+      message: "Area deleted successfully",
     });
   } catch (error) {
     console.error("Error in deleteArea:", error);
 
-    if (error.code === 'P2025') {
+    if (error.code === "P2025") {
       return res.status(404).json({
         success: false,
-        message: "Area not found"
+        message: "Area not found",
       });
     }
 
     return res.status(500).json({
       success: false,
       message: "Error deleting area",
-      error: error.message
+      error: error.message,
     });
   }
 };
-
 
 export {
   // Provinces
@@ -1017,25 +1029,25 @@ export {
   createProvince,
   updateProvince,
   deleteProvince,
-  
+
   // Districts
   getDistrictsByProvince,
   getAllDistricts,
   createDistrict,
   updateDistrict,
   deleteDistrict,
-  
-  // Cities 
+
+  // Cities
   getCitiesByDistrict,
   getAllCities,
   createCity,
   updateCity,
   deleteCity,
-  
+
   // Areas
   getAreasByCity,
   getAllAreas,
   createArea,
   updateArea,
-  deleteArea
+  deleteArea,
 };
