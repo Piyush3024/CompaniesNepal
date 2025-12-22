@@ -89,8 +89,8 @@ const formatCompanyResponse = (company, req, includeRelations = false) => {
       : null,
     documents_url: company.documents_url
       ? JSON.parse(company.documents_url).map((doc) =>
-          generateFileUrl(req, doc)
-        )
+        generateFileUrl(req, doc)
+      )
       : null,
     is_blocked: company.is_blocked,
     is_premium: company.is_premium,
@@ -216,27 +216,12 @@ export const createCompany = async (req, res) => {
     }
 
     // Handle file uploads
-    let logoPath = null;
-    let documentPaths = [];
-
-    if (req.file) {
-      logoPath = req.file.path;
-    } else if (req.files?.logo_url?.[0]) {
-      logoPath = req.files.logo_url[0].path;
-    }
-
-    if (req.files?.documents_url) {
-      documentPaths = req.files.documents_url.map((file) => file.path);
-    }
 
     const uploadedFiles = handleLocalFileUploads(req);
-    const finalLogoPath = logoPath || uploadedFiles.logo_url || null;
-    const finalDocumentPaths =
-      documentPaths.length > 0
-        ? documentPaths
-        : uploadedFiles.documents_url
-        ? [uploadedFiles.documents_url]
-        : [];
+    const finalLogoPath = uploadedFiles.logo_url || null;
+    const finalDocumentPaths = uploadedFiles.documents_url
+      ? (Array.isArray(uploadedFiles.documents_url) ? uploadedFiles.documents_url : [uploadedFiles.documents_url])
+      : [];
 
     // Parse social media links
     let parsedSocialMediaLinks = null;
@@ -450,9 +435,8 @@ export const toggleBlockStatus = async (req, res) => {
 
     res.json({
       success: true,
-      message: `Company ${
-        updatedCompany.is_blocked ? "blocked" : "unblocked"
-      } successfully`,
+      message: `Company ${updatedCompany.is_blocked ? "blocked" : "unblocked"
+        } successfully`,
       data: formatCompanyResponse(updatedCompany, req, true),
     });
   } catch (error) {
@@ -1100,26 +1084,12 @@ export const updateCompany = async (req, res) => {
     }
 
     // Handle file uploads
-    let newLogoPath = null;
-    let newDocumentPaths = [];
 
-    if (req.file && req.file.fieldname === "logo_url") {
-      newLogoPath = req.file.path;
-    } else if (req.files?.logo_url?.[0]) {
-      newLogoPath = req.files.logo_url[0].path;
-    }
-
-    if (req.files?.documents_url) {
-      newDocumentPaths = req.files.documents_url.map((file) => file.path);
-    }
-
-    if (!newLogoPath && !newDocumentPaths.length) {
-      const uploadedFiles = handleLocalFileUploads(req);
-      newLogoPath = uploadedFiles.logo_url;
-      if (uploadedFiles.documents_url) {
-        newDocumentPaths = [uploadedFiles.documents_url];
-      }
-    }
+    const uploadedFiles = handleLocalFileUploads(req);
+    const newLogoPath = uploadedFiles.logo_url || null;
+    const newDocumentPaths = uploadedFiles.documents_url
+      ? (Array.isArray(uploadedFiles.documents_url) ? uploadedFiles.documents_url : [uploadedFiles.documents_url])
+      : [];
 
     // Parse social media links
     let parsedSocialMediaLinks = undefined;
@@ -1509,14 +1479,14 @@ export const filterCompanies = async (req, res) => {
     const include =
       includeRelations === "true"
         ? {
-            areas: true,
-            company_type: true,
-            verification_status: true,
-            company_branches: {
-              where: { is_active: true },
-            },
-            company_categories: true,
-          }
+          areas: true,
+          company_type: true,
+          verification_status: true,
+          company_branches: {
+            where: { is_active: true },
+          },
+          company_categories: true,
+        }
         : {};
 
     // Validate sortBy field to prevent SQL injection

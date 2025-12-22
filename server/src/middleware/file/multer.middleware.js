@@ -16,12 +16,10 @@ const ENTITY_CONFIGS = {
     companies: {
         fields: {
             logo_url: 'featured_images',
-            brochure_file: 'brochures',
-            files: 'documents'
+            documents_url: 'documents'
         },
         defaultSubfolder: 'documents'
     },
-   
 
 };
 
@@ -177,39 +175,9 @@ export const uploadFields = (fields, entity = null) => {
 };
 
 // Entity-specific upload middleware
-export const uploadProgram = multer(createMulterConfig('programs')).fields([
-    { name: 'featured_image', maxCount: 1 },
-    { name: 'brochure_file', maxCount: 1 },
-    { name: 'files', maxCount: 5 }
-]);
-
-export const uploadNotice = multer(createMulterConfig('notices')).fields([
-    { name: 'attachment', maxCount: 1 },
-    { name: 'files', maxCount: 3 }
-]);
-
-export const uploadGallery = multer(createMulterConfig('galleries')).fields([
-    { name: 'image', maxCount: 1 },
-    { name: 'thumbnail', maxCount: 1 },
-    { name: 'files', maxCount: 10 }
-]);
-
-export const uploadMedia = multer(createMulterConfig('media')).fields([
-    { name: 'file', maxCount: 1 },
-    { name: 'thumbnail', maxCount: 1 },
-    { name: 'cover', maxCount: 1 }
-]);
-
-export const uploadFaculty = multer(createMulterConfig('faculty')).fields([
-    { name: 'profile_image', maxCount: 1 },
-    { name: 'cv', maxCount: 1 },
-    { name: 'files', maxCount: 3 }
-]);
-
-export const uploadTestimonial = multer(createMulterConfig('testimonials')).fields([
-    { name: 'student_image', maxCount: 1 },
-    { name: 'video_file', maxCount: 1 },
-    { name: 'files', maxCount: 5 }
+export const uploadCompany = multer(createMulterConfig('companies')).fields([
+    { name: 'logo_url', maxCount: 1 },
+    { name: 'documents_url', maxCount: 5 }
 ]);
 
 
