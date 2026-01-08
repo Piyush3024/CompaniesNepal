@@ -51,7 +51,11 @@ import {
   getCompanyTypes,
 } from "../../controller/company/company.controller.js";
 
-import { uploadCompany, validateFileTypes, organizeFiles } from "../../middleware/file/multer.middleware.js";
+import {
+  uploadCompany,
+  validateFileTypes,
+  organizeFiles,
+} from "../../middleware/file/multer.middleware.js";
 
 // Get all companies with pagination
 router.get(
@@ -141,14 +145,12 @@ router.get("/companyType", getCompanyTypes);
 
 // Filter companies
 router.get(
-    "/filter",
-    ...filterCompaniesQueryRules(),
-    validateFilterQueryParams,
-    handleCompanyValidationErrors,
-    filterCompanies
-  );
-  
-
+  "/filter",
+  ...filterCompaniesQueryRules(),
+  validateFilterQueryParams,
+  handleCompanyValidationErrors,
+  filterCompanies
+);
 
 // Get company by ID or slug (Must be after specific routes)
 router.get(
@@ -158,15 +160,14 @@ router.get(
   getCompanyByIdOrSlug
 );
 
-
 // Create company
 router.post(
   "/",
   protectRoute,
   authorizeRoles("seller", "admin"),
-  uploadCompany,  
-  validateFileTypes,  
-  organizeFiles,  
+  uploadCompany,
+  validateFileTypes,
+  organizeFiles,
   validateCreateCompanyRequest,
   ...createCompanyValidationRules(),
   validateFileUploads,
@@ -180,9 +181,9 @@ router.patch(
   protectRoute,
   authorizeRoles("seller", "admin"),
   companyIdParamRule(),
-  uploadCompany, 
-  validateFileTypes,  
-  organizeFiles,  
+  uploadCompany,
+  validateFileTypes,
+  organizeFiles,
   validateUpdateCompanyRequest,
   ...updateCompanyValidationRules(),
   validateFileUploads,
@@ -246,6 +247,5 @@ router.delete(
 );
 
 // get companytype
-
 
 export default router;
