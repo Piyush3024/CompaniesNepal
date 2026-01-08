@@ -14,7 +14,7 @@ model areas {
   postal_code      String?            @db.VarChar(20)
   created_at       DateTime           @default(now()) @db.Timestamp(0)
   updated_at       DateTime?          @default(now()) @db.Timestamp(0)
-  cities           cities             @relation(fields: [city_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "areas_ibfk_1")
+  cities           cities             @relation(fields: [city_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "areas_ibfk_1")
   companies        companies[]
   company_branches company_branches[]
   nearby_id        Int?
@@ -49,7 +49,7 @@ model categories {
   slug               String?              @unique @db.VarChar(255)
   description        String?              @db.Text
   products           products[]
-  company_categories company_categories[]
+  company_categories company_categories[] 
 }
 
 model cities {
@@ -92,9 +92,9 @@ model companies {
   verified_at            DateTime             @db.DateTime(0)
   total_reviews          Int                  @default(0)
   areas                  areas?               @relation(fields: [area_id], references: [id], onUpdate: Cascade, map: "companies_ibfk_1")
-  company_type           company_type?        @relation(fields: [company_type_id], references: [id], onUpdate: NoAction, map: "companies_ibfk_2")
-  verification_status    verification_status? @relation(fields: [verification_status_id], references: [id], onUpdate: NoAction, map: "companies_ibfk_3")
-  user                   user                 @relation(fields: [created_by], references: [id], onUpdate: NoAction, map: "companies_ibfk_4")
+  company_type           company_type?        @relation(fields: [company_type_id], references: [id], onUpdate: Cascade, map: "companies_ibfk_2")
+  verification_status    verification_status? @relation(fields: [verification_status_id], references: [id], onUpdate: Cascade, map: "companies_ibfk_3")
+  user                   user                 @relation(fields: [created_by], references: [id], onUpdate: Cascade, map: "companies_ibfk_4")
   company_branches       company_branches[]
   company_reviews        company_reviews[]
   company_users          company_users[]
@@ -123,8 +123,8 @@ model company_branches {
   email       String?   @db.VarChar(255)
   created_at  DateTime  @default(now()) @db.Timestamp(0)
   updated_at  DateTime? @default(now()) @db.Timestamp(0)
-  companies   companies @relation(fields: [company_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "company_branches_ibfk_1")
-  areas       areas?    @relation(fields: [area_id], references: [id], onUpdate: NoAction, map: "company_branches_ibfk_2")
+  companies   companies @relation(fields: [company_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "company_branches_ibfk_1")
+  areas       areas?    @relation(fields: [area_id], references: [id], onUpdate: Cascade, map: "company_branches_ibfk_2")
 
   @@index([area_id], map: "area_id")
   @@index([company_id], map: "company_id")
@@ -162,8 +162,8 @@ model company_reviews {
   comment    String?   @db.Text
   created_at DateTime  @default(now()) @db.Timestamp(0)
   updated_at DateTime? @default(now()) @db.Timestamp(0)
-  companies  companies @relation(fields: [company_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "company_reviews_ibfk_1")
-  user       user?     @relation(fields: [user_id], references: [id], onUpdate: NoAction, map: "company_reviews_ibfk_2")
+  companies  companies @relation(fields: [company_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "company_reviews_ibfk_1")
+  user       user?     @relation(fields: [user_id], references: [id], onUpdate: Cascade, map: "company_reviews_ibfk_2")
 
   @@unique([company_id, user_id])
   @@index([company_id], map: "company_id")
@@ -186,8 +186,8 @@ model company_users {
   joined_at  DateTime  @default(now()) @db.Timestamp(0)
   created_at DateTime  @default(now()) @db.Timestamp(0)
   updated_at DateTime? @default(now()) @db.Timestamp(0)
-  user       user      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "company_users_ibfk_1")
-  companies  companies @relation(fields: [company_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "company_users_ibfk_2")
+  user       user      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "company_users_ibfk_1")
+  companies  companies @relation(fields: [company_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "company_users_ibfk_2")
 
   @@unique([user_id, company_id], map: "user_id")
   @@index([company_id], map: "company_id")
@@ -200,7 +200,7 @@ model districts {
   created_at  DateTime  @default(now()) @db.Timestamp(0)
   updated_at  DateTime? @default(now()) @db.Timestamp(0)
   cities      cities[]
-  provinces   provinces @relation(fields: [province_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "districts_ibfk_1")
+  provinces   provinces @relation(fields: [province_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "districts_ibfk_1")
 
   @@index([province_id], map: "province_id")
 }
@@ -219,10 +219,10 @@ model inquiries {
   inquiries_type_id    Int
   created_at           DateTime               @default(now()) @db.Timestamp(0)
   updated_at           DateTime?              @default(now()) @db.Timestamp(0)
-  products             products?              @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "inquiries_ibfk_1")
-  companies            companies              @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "inquiries_ibfk_2")
-  user                 user?                  @relation(fields: [user_id], references: [id], onUpdate: NoAction, map: "inquiries_ibfk_3")
-  inquiries_type       inquiries_type?        @relation(fields: [inquiries_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "inquiries_ibfk_4")
+  products             products?              @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "inquiries_ibfk_1")
+  companies            companies              @relation(fields: [company_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "inquiries_ibfk_2")
+  user                 user?                  @relation(fields: [user_id], references: [id], onUpdate: Cascade, map: "inquiries_ibfk_3")
+  inquiries_type       inquiries_type?        @relation(fields: [inquiries_type_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "inquiries_ibfk_4")
   bookmarked_inquiries bookmarked_inquiries[]
   company_inquiries    company_inquiries[]
 
@@ -247,7 +247,7 @@ model notifications {
   is_read    Boolean?  @default(false)
   created_at DateTime  @default(now()) @db.Timestamp(0)
   updated_at DateTime? @default(now()) @db.Timestamp(0)
-  user       user      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "notifications_ibfk_1")
+  user       user      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "notifications_ibfk_1")
 
   @@index([user_id], map: "user_id")
 }
@@ -259,7 +259,7 @@ model product_images {
   is_primary Boolean   @default(false)
   created_at DateTime  @default(now()) @db.Timestamp(0)
   updated_at DateTime? @default(now()) @db.Timestamp(0)
-  products   products  @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_images_ibfk_1")
+  products   products  @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "product_images_ibfk_1")
 
   @@index([product_id], map: "product_id")
 }
@@ -272,8 +272,8 @@ model product_reviews {
   comment    String?   @db.Text
   created_at DateTime  @default(now()) @db.Timestamp(0)
   updated_at DateTime? @default(now()) @db.Timestamp(0)
-  products   products  @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "product_reviews_ibfk_1")
-  user       user?     @relation(fields: [user_id], references: [id], onUpdate: NoAction, map: "product_reviews_ibfk_2")
+  products   products  @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "product_reviews_ibfk_1")
+  user       user?     @relation(fields: [user_id], references: [id], onUpdate: Cascade, map: "product_reviews_ibfk_2")
 
   @@unique([product_id, user_id])
   @@index([product_id], map: "product_id")
@@ -286,7 +286,7 @@ model product_tags {
   tag        String    @db.VarChar(100)
   created_at DateTime  @default(now()) @db.Timestamp(0)
   updated_at DateTime? @default(now()) @db.Timestamp(0)
-  products   products  @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_tags_ibfk_1")
+  products   products  @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "product_tags_ibfk_1")
 
   @@index([product_id], map: "product_id")
 }
@@ -309,8 +309,8 @@ model products {
   product_images  product_images[]
   product_reviews product_reviews[]
   product_tags    product_tags[]
-  companies       companies         @relation(fields: [company_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "products_ibfk_1")
-  categories      categories?       @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "products_ibfk_2")
+  companies       companies         @relation(fields: [company_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "products_ibfk_1")
+  categories      categories?       @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "products_ibfk_2")
   saved_products  saved_products[]
 
   @@index([average_rating, total_reviews], name: "avg_rating_index")
@@ -335,8 +335,8 @@ model saved_products {
   product_id Int
   created_at DateTime  @default(now()) @db.Timestamp(0)
   updated_at DateTime? @default(now()) @db.Timestamp(0)
-  user       user      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "saved_products_ibfk_1")
-  products   products  @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "saved_products_ibfk_2")
+  user       user      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "saved_products_ibfk_1")
+  products   products  @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "saved_products_ibfk_2")
 
   @@unique([user_id, product_id], map: "user_id")
   @@index([product_id], map: "product_id")
@@ -388,8 +388,8 @@ model user {
   notifications   notifications[]
   product_reviews product_reviews[]
   saved_products  saved_products[]
-  role            role              @relation(fields: [role_id], references: [role_id], onDelete: Cascade, onUpdate: NoAction, map: "user_ibfk_1")
-  status          status            @relation(fields: [status_id], references: [status_id], onDelete: Cascade, onUpdate: NoAction, map: "user_ibfk_2")
+  role            role              @relation(fields: [role_id], references: [role_id], onDelete: Cascade, onUpdate: Cascade, map: "user_ibfk_1")
+  status          status            @relation(fields: [status_id], references: [status_id], onDelete: Cascade, onUpdate: Cascade, map: "user_ibfk_2")
 
   bookmarked_inquiries bookmarked_inquiries[]
   areas                areas?                 @relation(fields: [areasId], references: [id])

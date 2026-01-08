@@ -31,7 +31,7 @@ export const isSameUser = (req, res, next) => {
 export const authorizeRoles = (...allowedRoles) => {
   return async (req, res, next) => {
     try {
-      console.log("Allowed roles:", req.user.role);
+      
       if (!allowedRoles.length === 0) {
         return res.status(403).json({
           error: " No roles provided for authorization",
@@ -53,6 +53,7 @@ export const authorizeRoles = (...allowedRoles) => {
           success: false,
         });
       }
+     
       next();
     } catch (error) {
       return res.status(500).json({
@@ -65,9 +66,7 @@ export const authorizeRoles = (...allowedRoles) => {
 
 export const protectRoute = async (req, res, next) => {
   try {
-    console.log("access token:", req.header);
     const accessToken = req.cookies.accessToken;
-    console.log("accessToken :", accessToken);
 
     if (!accessToken) {
       return res.status(401).json({

@@ -89,8 +89,8 @@ const formatCompanyResponse = (company, req, includeRelations = false) => {
       : null,
     documents_url: company.documents_url
       ? JSON.parse(company.documents_url).map((doc) =>
-        generateFileUrl(req, doc)
-      )
+          generateFileUrl(req, doc)
+        )
       : null,
     is_blocked: company.is_blocked,
     is_premium: company.is_premium,
@@ -220,7 +220,9 @@ export const createCompany = async (req, res) => {
     const uploadedFiles = handleLocalFileUploads(req);
     const finalLogoPath = uploadedFiles.logo_url || null;
     const finalDocumentPaths = uploadedFiles.documents_url
-      ? (Array.isArray(uploadedFiles.documents_url) ? uploadedFiles.documents_url : [uploadedFiles.documents_url])
+      ? Array.isArray(uploadedFiles.documents_url)
+        ? uploadedFiles.documents_url
+        : [uploadedFiles.documents_url]
       : [];
 
     // Parse social media links
@@ -435,8 +437,9 @@ export const toggleBlockStatus = async (req, res) => {
 
     res.json({
       success: true,
-      message: `Company ${updatedCompany.is_blocked ? "blocked" : "unblocked"
-        } successfully`,
+      message: `Company ${
+        updatedCompany.is_blocked ? "blocked" : "unblocked"
+      } successfully`,
       data: formatCompanyResponse(updatedCompany, req, true),
     });
   } catch (error) {
@@ -964,6 +967,7 @@ export const getMyCompanies = async (req, res) => {
     res.json({
       success: true,
       message: "My companies retrieved successfully",
+
       data: companies.map((company) =>
         formatCompanyResponse(company, req, true)
       ),
@@ -1088,7 +1092,9 @@ export const updateCompany = async (req, res) => {
     const uploadedFiles = handleLocalFileUploads(req);
     const newLogoPath = uploadedFiles.logo_url || null;
     const newDocumentPaths = uploadedFiles.documents_url
-      ? (Array.isArray(uploadedFiles.documents_url) ? uploadedFiles.documents_url : [uploadedFiles.documents_url])
+      ? Array.isArray(uploadedFiles.documents_url)
+        ? uploadedFiles.documents_url
+        : [uploadedFiles.documents_url]
       : [];
 
     // Parse social media links
@@ -1205,7 +1211,7 @@ export const deleteCompany = async (req, res) => {
     }
 
     // Check permissions - only admin can delete
-    if (req.user.role !== "admin") {
+    if (req.user.role.name !== "admin") {
       return res.status(403).json({
         success: false,
         message: "Only admins can delete companies",
@@ -1479,14 +1485,14 @@ export const filterCompanies = async (req, res) => {
     const include =
       includeRelations === "true"
         ? {
-          areas: true,
-          company_type: true,
-          verification_status: true,
-          company_branches: {
-            where: { is_active: true },
-          },
-          company_categories: true,
-        }
+            areas: true,
+            company_type: true,
+            verification_status: true,
+            company_branches: {
+              where: { is_active: true },
+            },
+            company_categories: true,
+          }
         : {};
 
     // Validate sortBy field to prevent SQL injection

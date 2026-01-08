@@ -96,7 +96,10 @@ const validateFile = (file, config) => {
 // Validate company create request
 export const validateCreateCompanyRequest = (req, res, next) => {
     try {
+        console.log('Create company request body:', req.body);
+        
         const { name, company_type_id } = req.body;
+
 
         // Name is required
         if (!name || typeof name !== 'string' || name.trim().length === 0) {

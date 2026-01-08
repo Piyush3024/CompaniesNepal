@@ -14,7 +14,7 @@ import authRoutes from "../src/route/auth/auth.route.js";
 import locationRoutes from "../src/route/location/location.route.js";
 import companyRoutes from "../src/route/company/company.route.js";
 import userRoutes from "../src/route/user.route.js";
-import categoriesRoutes from "../src/route/categories.route.js";
+import categoriesRoutes from "../src/route/categories/categories.route.js";
 import inquiriesRoutes from "../src/route/inquiries.route.js";
 import reviewsRoutes from "../src/route/review.route.js";
 import productsRoutes from "../src/route/products.route.js";
