@@ -367,7 +367,7 @@ model user {
   phone                            String?   @db.VarChar(20)
   profile_picture                  String?   @db.Text
   role_id                          Int       @default(1)
-  status_id                        Int       @default(1)
+  status_id                        Int       @default(1) 
   email_verified                   Boolean   @default(false)
   email_verification_token         String?   @db.Text
   password_reset_token             String?   @db.Text

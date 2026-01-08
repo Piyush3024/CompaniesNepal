@@ -63,12 +63,12 @@ export const login = async (req, res) => {
           { username: loginIdentifier }
         ]
       },
-      include:{
+      include: {
         role: {
           select: {
             role_id: true,
             name: true,
-            
+
           },
         }
       }
@@ -164,7 +164,7 @@ export const signup = async (req, res) => {
     });
 
     if (existingUser) {
-      res.status(400).json({
+     return res.status(400).json({
         success: false,
         message: "Username or email already exists",
       });
@@ -410,7 +410,7 @@ export const refreshToken = async (req, res) => {
     }
 
     // Get user from database
-    const user = await prisma.users.findUnique({
+    const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
       select: {
         id: true,
@@ -450,7 +450,7 @@ export const refreshToken = async (req, res) => {
     setCookies(res, accessToken, newRefreshToken);
 
     // Update user's last login
-    await prisma.users.update({
+    await prisma.user.update({
       where: { id: user.id },
       data: { last_login: new Date() }
     });
@@ -584,28 +584,37 @@ export const oauthCallback = async (profile, provider, done) => {
         OR: [{ oauth_id: oauthId }, { email }],
       },
       include: {
-        role: true,
+        role: {
+          select: {
+            role_id: true,
+            name: true,
+
+          }
+        },
       },
     });
 
     let isNewUser = false;
 
     if (user) {
-      // Existing user: update details if needed
+
       user = await prisma.user.update({
         where: { user_id: user.user_id },
         data: {
           oauth_id: oauthId,
           oauth_provider: provider,
-          username,
-          full_name,
-          image,
-          location,
+          profile_picture,
           email_verified: true,
+          last_login: new Date(),
           updated_at: new Date(),
         },
         include: {
-          role: true,
+          role: {
+            select: {
+              role_id: true,
+              name: true,
+            }
+          },
         },
       });
     } else {
@@ -615,16 +624,22 @@ export const oauthCallback = async (profile, provider, done) => {
           oauth_id: oauthId,
           oauth_provider: provider,
           email,
-          username,
-          full_name,
-          image,
-          location,
-          role_id: 3, // Student role
+          username: username + "_" + Date.now(),
+          profile_picture,
+          role_id: 1,
+          status_id: 1,
           email_verified: true,
+          last_login: new Date(),
+          created_at: new Date(),
           updated_at: new Date(),
         },
         include: {
-          role: true,
+          role: {
+            select: {
+              role_id: true,
+              name: true,
+            }
+          },
         },
       });
       isNewUser = true;
@@ -635,7 +650,14 @@ export const oauthCallback = async (profile, provider, done) => {
 
     // Return user data with isNewUser flag
     return done(null, {
-      user,
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        profile_picture: user.profile_picture,
+        email_verified: user.email_verified,
+        role: user.role,
+      },
       accessToken,
       refreshToken,
       isNewUser,
