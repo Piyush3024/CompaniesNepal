@@ -22,7 +22,7 @@ export const decodeHashId = (hashedId) => {
 };
 
 // Generate secrets for JhuniCodes
-// console.log('ACCESS_TOKEN_SECRET:', generateSecret());
+console.log('ACCESS_TOKEN_SECRET:', generateSecret());
 // console.log('HASH_ID:', hashId());
 // console.log('PASSWORD_RESET_SECRET:', generateSecret());
 // console.log('SESSION_SECRET:', generateSecret());
