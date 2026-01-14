@@ -31,16 +31,28 @@ export class AppService {
           total: `${Math.round(memoryUsage.heapTotal / 1024 / 1024)}MB`,
         },
       };
-    } catch (error) {
-      throw new HttpException(
-        {
-          status: 'error',
-          message: 'Server is unhealthy',
-          database: 'disconnected',
-          error: IS_PRODUCTION ? 'Database connection failed' : error.message,
-        },
-        HttpStatus.SERVICE_UNAVAILABLE,
-      );
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new HttpException(
+          {
+            status: 'error',
+            message: 'Server is unhealthy',
+            database: 'disconnected',
+            error: IS_PRODUCTION ? 'Database connection failed' : error.message,
+          },
+          HttpStatus.SERVICE_UNAVAILABLE,
+        );
+      } else {
+        throw new HttpException(
+          {
+            status: 'error',
+            message: 'Server is unhealthy',
+            database: 'disconnected',
+            error: error,
+          },
+          HttpStatus.SERVICE_UNAVAILABLE,
+        );
+      }
     }
   }
 }

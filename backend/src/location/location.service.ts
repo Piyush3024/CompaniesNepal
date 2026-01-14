@@ -17,7 +17,7 @@ import {
   UpdateAreaDto,
 } from './dto';
 import { Prisma } from '@prisma/client';
-import { isNodeError } from 'src/common/utils/error.util';
+import { isNodeError } from '../common/utils/error.util';
 
 @Injectable()
 export class LocationService {

@@ -7,7 +7,7 @@ import {
   EntityName,
   FieldConfig,
 } from './constants/file-upload.constants';
-import { isNodeError } from 'src/common/utils/error.util';
+import { isNodeError } from '../common/utils/error.util';
 
 @Injectable()
 export class FileUploadService implements OnModuleInit {

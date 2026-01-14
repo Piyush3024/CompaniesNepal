@@ -20,7 +20,7 @@ import { ResetPasswordDto } from './dto/reset-password.dto';
 import { ResendVerificationDto } from './dto/resend-verfication.dto';
 import { encodeId } from '../common/utils/secure.util';
 import { Response } from 'express';
-import { isNodeError } from 'src/common/utils/error.util';
+import { isNodeError } from '../common/utils/error.util';
 
 @Injectable()
 export class AuthService {
