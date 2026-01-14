@@ -40,7 +40,7 @@ export class AuthController {
     return res.status(HttpStatus.CREATED).json(result);
   }
 
-  @Post('login')
+  @Post('/login')
   @Throttle({ default: { limit: 5, ttl: 900000 } }) // 5 requests per 15 minutes
   @HttpCode(HttpStatus.OK)
   async login(@Body() loginDto: LoginDto, @Res() res: Response) {

@@ -10,6 +10,10 @@ import { AuthModule } from './auth/auth.module';
 import { RedisService } from './redis/redis.service';
 import { RedisModule } from './redis/redis.module';
 import { EmailModule } from './email/email.module';
+import { RoleModule } from './role/role.module';
+import { LocationModule } from './location/location.module';
+import { CompaniesModule } from './companies/companies.module';
+import { FileUploadModule } from './file/file-upload.module';
 
 @Module({
   imports: [
@@ -45,6 +49,10 @@ import { EmailModule } from './email/email.module';
     AuthModule,
     RedisModule,
     EmailModule,
+    RoleModule,
+    LocationModule,
+    CompaniesModule,
+    FileUploadModule,
   ],
   controllers: [AppController],
   providers: [

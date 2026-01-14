@@ -4,13 +4,18 @@ import {
   MinLength,
   MaxLength,
   Matches,
+  IsOptional,
 } from 'class-validator';
 import { PASSWORD_CONFIG } from '../../common/constants/validation.constants';
 
 export class LoginDto {
+  @IsOptional()
   @IsString()
-  @IsNotEmpty({ message: 'Email or username is required' })
-  email: string; // Can be email or username
+  email?: string;
+
+  @IsOptional()
+  @IsString()
+  username?: string;
 
   @IsString()
   @IsNotEmpty({ message: 'Password is required' })

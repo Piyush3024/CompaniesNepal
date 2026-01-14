@@ -20,6 +20,7 @@ import { ResetPasswordDto } from './dto/reset-password.dto';
 import { ResendVerificationDto } from './dto/resend-verfication.dto';
 import { encodeId } from '../common/utils/secure.util';
 import { Response } from 'express';
+import { isNodeError } from 'src/common/utils/error.util';
 
 @Injectable()
 export class AuthService {
@@ -170,12 +171,17 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto, res: Response) {
-    const { email, password } = loginDto;
+    const { email, username, password } = loginDto;
+
+    const loginIdentifier = email || username;
+    if (!loginIdentifier) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
 
     // Find user by email or username
     const user = await this.prisma.user.findFirst({
       where: {
-        OR: [{ email }, { username: email }],
+        OR: [{ email: loginIdentifier }, { username: loginIdentifier }],
       },
       include: {
         role: {
@@ -316,8 +322,8 @@ export class AuthService {
         message: 'Email verified successfully!',
         redirectTo: '/login',
       };
-    } catch (error) {
-      if (error === 'TokenExpiredError') {
+    } catch (error: unknown) {
+      if (isNodeError(error) && error.code === 'TokenExpiredError') {
         throw new BadRequestException(
           'Verification token has expired. Please request a new one.',
         );
@@ -527,12 +533,13 @@ export class AuthService {
         success: true,
         message: 'Password reset successfully',
       };
-    } catch (error) {
-      if (error.name === 'TokenExpiredError') {
+    } catch (error: unknown) {
+      if (isNodeError(error) && error.code === 'TokenExpiredError') {
         throw new BadRequestException(
           'Reset token has expired. Please request a new one.',
         );
       }
+
       throw new BadRequestException('Invalid reset token');
     }
   }
