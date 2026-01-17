@@ -203,15 +203,3 @@ export class FileUploadService implements OnModuleInit {
     }
   }
 }
-
-// Pattern to follow everywhere
-// try {
-//   // your code
-// } catch (error: unknown) {
-//   if (isNodeError(error) && error.code === 'ENOENT') {
-//     // handle specific error
-//   } else {
-//     this.logger.error('Error message', error);
-//     throw error;
-//   }
-// }

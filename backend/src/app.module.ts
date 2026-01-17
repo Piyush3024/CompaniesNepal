@@ -14,6 +14,8 @@ import { RoleModule } from './role/role.module';
 import { LocationModule } from './location/location.module';
 import { CompaniesModule } from './companies/companies.module';
 import { FileUploadModule } from './file/file-upload.module';
+import { CategoriesModule } from './categories/categories.module';
+import { StatusModule } from './status/status.module';
 
 @Module({
   imports: [
@@ -53,6 +55,8 @@ import { FileUploadModule } from './file/file-upload.module';
     LocationModule,
     CompaniesModule,
     FileUploadModule,
+    CategoriesModule,
+    StatusModule,
   ],
   controllers: [AppController],
   providers: [

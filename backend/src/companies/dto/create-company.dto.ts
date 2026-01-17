@@ -1,5 +1,3 @@
-// src/companies/dto/create-company.dto.ts
-
 import {
   IsString,
   IsEmail,

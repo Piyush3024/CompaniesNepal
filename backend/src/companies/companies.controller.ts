@@ -1,5 +1,3 @@
-// src/companies/companies.controller.ts
-
 import {
   Controller,
   Get,

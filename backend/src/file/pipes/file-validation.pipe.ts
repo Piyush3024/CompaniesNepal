@@ -125,7 +125,7 @@ export class FileValidationPipe implements PipeTransform {
     for (const file of allFiles) {
       try {
         if (fs.existsSync(file.path)) {
-          await fs.promises.unlink(file.path); // Use 'await' here
+          await fs.promises.unlink(file.path);
           this.logger.log(`Cleaned up file: ${file.path}`);
         }
       } catch (error) {

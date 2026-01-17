@@ -56,7 +56,6 @@ export class RegisterDto {
   })
   phone?: string;
 
-  @IsInt()
   @IsNotEmpty({ message: 'Role ID is required' })
-  role_id: number;
+  role_id: string;
 }

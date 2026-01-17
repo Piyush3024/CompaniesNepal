@@ -18,9 +18,11 @@ import { RegisterDto } from './dto/register.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { ResendVerificationDto } from './dto/resend-verfication.dto';
-import { encodeId } from '../common/utils/secure.util';
+import { encodeId, decodeId } from '../common/utils/secure.util';
 import { Response } from 'express';
 import { isNodeError } from '../common/utils/error.util';
+import { UserResponse } from './entities/auth.entity';
+import { user } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -32,7 +34,7 @@ export class AuthService {
     private configService: ConfigService,
     private redis: RedisService,
     private emailService: EmailService,
-  ) {}
+  ) { }
 
   private generateTokens(userId: number) {
     const accessToken = this.jwtService.sign(
@@ -97,6 +99,7 @@ export class AuthService {
 
   async register(registerDto: RegisterDto, res: Response) {
     const { username, email, password, phone, role_id } = registerDto;
+    const roleId = decodeId(role_id);
 
     // Check if user already exists
     const existingUser = await this.prisma.user.findFirst({
@@ -119,7 +122,7 @@ export class AuthService {
         email,
         password: hashedPassword,
         phone,
-        role_id,
+        role_id: roleId,
         email_verified: false,
         updated_at: new Date(),
       },
@@ -130,8 +133,11 @@ export class AuthService {
         phone: true,
         role_id: true,
         email_verified: true,
+        status_id: true,
+        created_at: true,
       },
     });
+
 
     // Generate verification token
     const verificationToken = this.generateVerificationToken(user.id);
@@ -166,7 +172,7 @@ export class AuthService {
       success: true,
       message:
         'Registration successful. Please check your email to verify your account.',
-      data: user,
+      data: { ...user, id: encodeId(user.id), role_id: encodeId(user.role_id), status_id: encodeId(user.status_id) }
     };
   }
 
